@@ -1,13 +1,15 @@
 #32 sets, 1-way set associative (Direct mapped)
-# 8 contingous addresses per line
+#8 contingous addresses per line
 #each memory reference is a 3 byte word
 #
 
+import math
+
 def main():
     data = []
-    N = 32
-    K = 2
-    L = 8
+    N = 32 # number of sets
+    K = 4 # number of lines(blocks) per set
+    L = 8 # number of bytes per line(block) of cache mem
 
     HIT = 0
     MISS = 0
@@ -29,10 +31,28 @@ def main():
     while i < len(data) - 2:
         reorderedData.append(data[i+2] + data[i+1] + data[i]) #reordering
         i += 3
-    print(reorderedData[0])
 
-    dataObjects 
 
+    #get ready to hold the data as a list of objects, keep track of the offsets
+    dataSets = [] 
+    indexes = []
+
+    #lower 3 bits are cleared so, ignore bits 21-23
+    for entry in reorderedData:
+        index_size = int(math.log2(K)) # 1,2,3,4
+        index_start = 21 - index_size
+        index = entry[index_start:21] #21 is stop bit, not included
+        #print(index)
+        indexes.append(index)
+
+        # offset = entry[:]
+        # offsets.append(offset)
+
+        tag = entry[0:index_start] #setting tag
+        dataSet = Sets(tag, index)
+        dataSets.append(dataSet)
+
+    print(dataSets[0])
 
 
 #"Sets" class for the cache
@@ -40,13 +60,12 @@ def main():
 #easiest to define it as an object with parameters
 class Sets(object):
     tag = "" #data
-	index = [""] * 16 #which address within the set 
-	offset = "" #set index to go to
+    index = [] #* 16 #address within set
+    #offset = "" #index within block
 
-	def __init__(self, offset, index, tag):
+    def __init__(self, tag, index):
         self.tag = tag
-		self.offset = offset
-		self.index = index
+        self.index = index
 		
         
 

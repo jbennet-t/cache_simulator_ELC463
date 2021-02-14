@@ -116,7 +116,6 @@ def main():
 	# 				cacheItem.index.append(entry.tag)
 	# 				MISS += 1
 
-	print(cache)
 
 	#Print out results
 	total = MISS + HIT
