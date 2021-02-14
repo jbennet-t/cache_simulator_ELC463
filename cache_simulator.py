@@ -47,6 +47,8 @@ def main():
 
         # offset = entry[:]
         # offsets.append(offset)
+        #offset probably not used due to removal of last 3 bits,
+        #as stated in handout
 
         tag = entry[0:index_start] #setting tag
         dataSet = Sets(tag, index)
