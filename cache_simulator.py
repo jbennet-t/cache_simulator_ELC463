@@ -7,8 +7,9 @@ import math
 
 def main():
     data = []
-    N = 32 # number of sets
+    KN = 64
     K = 4 # number of lines(blocks) per set
+    N = KN/K # number of sets
     L = 8 # number of bytes per line(block) of cache mem
 
     HIT = 0
@@ -53,8 +54,55 @@ def main():
         tag = entry[0:index_start] #setting tag
         dataSet = Sets(tag, index)
         dataSets.append(dataSet)
+        #validBit = entry[0]
+        
+        #print(tag)
 
-    print(dataSets[0])
+    print(len(dataSets))
+
+    #creating the cache
+    cache = []
+    i = 0
+    while i < N:
+        cache.append(Sets([""]*K, indexes[i]))
+        i += 1
+        
+
+    # objectOfInterest = cache[13]
+    # print(objectOfInterest.tag)
+    # cache(list)<-Sets(object)
+
+    #print(dataSets[0])
+
+    #-------------------------------------------------------------
+    #LRU
+    #-------------------------------------------------------------
+    for entry in dataSets:
+        for cacheItem in cache:
+            if entry.index == cacheItem.index:
+                if cacheItem.tag[0] == "": # ['','','','']
+                    cacheItem.tag[0:(K-1)] = entry.tag[0:(K-1)]
+                    #cacheItem.tag = entry.tag
+                    MISS += 1
+                elif cacheItem.tag[0] != "" and cacheItem.tag[0:(K-1)] == entry.tag[0:(K-1)]:
+                    HIT += 1
+                else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
+                    #cacheItem.tag = entry.tag
+                    cacheItem.tag[0:(K-1)] = entry.tag[0:(K-1)]
+                    MISS += 1
+            break
+    
+    print(cache[11])
+    print(len(dataSets))
+
+
+    #Output results
+    total = MISS + HIT
+    print("Misses: %d\nHits: %d" % (MISS, HIT))
+    #print("Miss Rate: %f \nHit Rate: %f" % ((MISS/total*10), (HIT/total*10)))
+    print("Total Number of References = %d" % (total))
+    print("Miss rate = %f" % (MISS/600000))
+    print("Hit rate = %f" % (HIT/600000))
 
 
 #"Sets" class for the cache
@@ -62,13 +110,16 @@ def main():
 #easiest to define it as an object with parameters
 class Sets(object):
     tag = "" #data
-    index = [] #* 16 #address within set
+    index = [""] #* 16 #address within set
     #offset = "" #index within block
 
     def __init__(self, tag, index):
         self.tag = tag
         self.index = index
-		
-        
+        #self.offset = offset
+
+    def __str__(self):
+        return str(self.tag)
+
 
 main()
