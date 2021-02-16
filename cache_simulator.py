@@ -58,8 +58,6 @@ def main():
         
         #print(tag)
 
-    print(len(dataSets))
-
     #creating the cache
     cache = []
     i = 0
@@ -81,28 +79,48 @@ def main():
         for cacheItem in cache:
             if entry.index == cacheItem.index:
                 if cacheItem.tag[0] == "": # ['','','','']
-                    cacheItem.tag[0:(K-1)] = entry.tag[0:(K-1)]
-                    #cacheItem.tag = entry.tag
+                    cacheItem.tag = entry.tag
                     MISS += 1
-                elif cacheItem.tag[0] != "" and cacheItem.tag[0:(K-1)] == entry.tag[0:(K-1)]:
+                elif cacheItem.tag[0] != "" and cacheItem.tag == entry.tag:
                     HIT += 1
                 else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
-                    #cacheItem.tag = entry.tag
-                    cacheItem.tag[0:(K-1)] = entry.tag[0:(K-1)]
+                    cacheItem.tag = entry.tag
                     MISS += 1
+            else: #entry.index != cacheItem.index
+                MISS += 1  
             break
-    
-    print(cache[11])
-    print(len(dataSets))
+    #--------------------------------------------------------------
+
+    #-------------------------------------------------------------- 
+    #FIFO
+    #--------------------------------------------------------------
+    # for entry in dataSets:
+    #     for cacheItem in cache:
+    #         if entry.index == cacheItem.index:
+    #             if cacheItem.tag[0] == "":
+    #                 cacheItem.tag = entry.tag
+    #                 MISS += 1
+    #             elif cacheItem.tag[0] != "":
+    #                 cacheItem.tag.append(entry.tag)
+    #                 HIT += 1
+    #             else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
+    #                 cacheItem.tag.pop(0)
+    #                 cacheItem.tag.append(entry.tag)
+    #                 MISS += 1
+    #         else: #entry.index != cacheItem.index
+    #             MISS += 1  
+    #         break
+                    
+
 
 
     #Output results
     total = MISS + HIT
     print("Misses: %d\nHits: %d" % (MISS, HIT))
-    #print("Miss Rate: %f \nHit Rate: %f" % ((MISS/total*10), (HIT/total*10)))
+    print("Miss Rate: %f \nHit Rate: %f" % ((MISS/(total*10)), (HIT/(total*10))))
     print("Total Number of References = %d" % (total))
-    print("Miss rate = %f" % (MISS/600000))
-    print("Hit rate = %f" % (HIT/600000))
+    # print("Miss rate = %f" % (MISS/600000))
+    # print("Hit rate = %f" % (HIT/600000))
 
 
 #"Sets" class for the cache
@@ -118,8 +136,8 @@ class Sets(object):
         self.index = index
         #self.offset = offset
 
-    def __str__(self):
-        return str(self.tag)
+    # def __str__(self):
+    #     return str(self.tag)
 
 
 main()
