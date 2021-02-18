@@ -1,0 +1,35 @@
+
+tag index
+
+tag is data
+index is index
+
+
+LRU sudo code
+
+for a set in setList
+ for a cacheItem in cacheList
+  if set.index == cacheItem.index
+    if cacheItem.isEmpty
+      cacheItem.tag = set.tag
+      MISS += 1
+    elif cacheItem.isFull and cacheItem.tag == set.tag
+      HIT += 1
+    elif cacheItem.isFull and cacheItem.tag /= set.tag
+      cacheItem.tag = set.tag
+      MISS += 1
+
+
+
+FIFO sudo code
+
+for a set in setList
+ for a cacheItem in cacheList
+  if set.index == cacheItem.index
+
+
+index = 0001 tag = 101010 Writing in, M
+
+index = 0001 tag = 101010 H
+
+index = 0001 tag = 100000 Writing in, M

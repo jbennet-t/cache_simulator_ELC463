@@ -51,12 +51,13 @@ def main():
         #offset probably not used due to removal of last 3 bits,
         #as stated in handout
 
-        tag = entry[0:index_start] #setting tag
-        dataSet = Sets(tag, index)
+        tagz = entry[0:index_start] #setting tag
+        dataSet = Sets(tagz, index)
         dataSets.append(dataSet)
         #validBit = entry[0]
         
         #print(tag)
+
 
     #creating the cache
     cache = []
@@ -64,33 +65,46 @@ def main():
     while i < N:
         cache.append(Sets([""]*K, indexes[i]))
         i += 1
-        
+        print(cache[i-1].tag)
+        print(dataSets[i-1].tag)
+    
 
     # objectOfInterest = cache[13]
     # print(objectOfInterest.tag)
     # cache(list)<-Sets(object)
 
     #print(dataSets[0])
-
+    counter = 0
+    empty_space = 0
+    hit_space = 0
+    overwrite_space = 0
     #-------------------------------------------------------------
     #LRU
     #-------------------------------------------------------------
     for entry in dataSets:
         for cacheItem in cache:
             if entry.index == cacheItem.index:
-                if cacheItem.tag[0] == "": # ['','','','']
+                counter += 1
+                if cacheItem.tag[0] == '': # ['','','','']
                     cacheItem.tag = entry.tag
                     MISS += 1
-                elif cacheItem.tag[0] != "" and cacheItem.tag == entry.tag:
+                    empty_space += 1
+                    print(cacheItem.tag[5])  
+                elif cacheItem.tag[0] != '' and cacheItem.tag == entry.tag:
                     HIT += 1
+                    hit_space += 1
                 else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
                     cacheItem.tag = entry.tag
                     MISS += 1
+                    overwrite_space += 1
             else: #entry.index != cacheItem.index
-                MISS += 1  
+                MISS += 1
             break
     #--------------------------------------------------------------
-
+    print("counter", counter)
+    print("empty", empty_space)
+    print("hit", hit_space)
+    print("overwrite", overwrite_space)
     #-------------------------------------------------------------- 
     #FIFO
     #--------------------------------------------------------------
@@ -127,8 +141,8 @@ def main():
 #Sets are comprised of the tags, index, and offset
 #easiest to define it as an object with parameters
 class Sets(object):
-    tag = "" #data
-    index = [""] #* 16 #address within set
+    tag = [""] #data
+    index = "" #* 16 #address within set
     #offset = "" #index within block
 
     def __init__(self, tag, index):
