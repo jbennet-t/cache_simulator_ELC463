@@ -115,7 +115,6 @@ def main():
                     MISS += 1
                     set_counter(i, N, cache) #increment and check set counter
                     empty += 1
-                    print(i)
                 elif cache[i][set_cntr] != 0 and cache[i][set_cntr] == entry[0:index_start]: #if not empty & the same
                     HIT += 1
                     #set_counter(i, N, cache) #increment and check set counter
