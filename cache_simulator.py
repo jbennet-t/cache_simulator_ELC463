@@ -29,6 +29,7 @@ def main():
     i = 0
 
     #reorder bits
+    #changing the msb to lsb and vice versa
     while i < len(data) - 2:
         reorderedData.append(data[i+2] + data[i+1] + data[i]) #reordering
         i += 3
@@ -51,12 +52,13 @@ def main():
         #offset probably not used due to removal of last 3 bits,
         #as stated in handout
 
-        tagz = entry[0:index_start] #setting tag
-        dataSet = Sets(tagz, index)
+        tag = entry[0:index_start] #setting tag
+        dataSet = Sets(tag, index)
         dataSets.append(dataSet)
         #validBit = entry[0]
         
         #print(tag)
+    print('[%s]' % ', '.join(map(str, indexes)))
 
 
     #creating the cache
@@ -65,8 +67,19 @@ def main():
     while i < N:
         cache.append(Sets([""]*K, indexes[i]))
         i += 1
-        print(cache[i-1].tag)
-        print(dataSets[i-1].tag)
+        # print(cache[i-1].tag)
+        # print(dataSets[i-1].tag)
+
+        #[ idx  00 01 10 11  cntr
+        # set 1['a','b','c','d', x]
+        # set 2['','','','', x]
+        # set 3['','','','', x]
+        # set 4['','','','', x]
+        #]
+
+        # 01_a 00_b 11_a 01_a 00_c
+
+        
     
 
     # objectOfInterest = cache[13]
@@ -85,11 +98,10 @@ def main():
         for cacheItem in cache:
             if entry.index == cacheItem.index:
                 counter += 1
-                if cacheItem.tag[0] == '': # ['','','','']
+                if cacheItem.tag[0] == '': # ['','','','',x] x+1 [0][5]
                     cacheItem.tag = entry.tag
                     MISS += 1
                     empty_space += 1
-                    print(cacheItem.tag[5])  
                 elif cacheItem.tag[0] != '' and cacheItem.tag == entry.tag:
                     HIT += 1
                     hit_space += 1
@@ -143,12 +155,10 @@ def main():
 class Sets(object):
     tag = [""] #data
     index = "" #* 16 #address within set
-    #offset = "" #index within block
 
     def __init__(self, tag, index):
         self.tag = tag
         self.index = index
-        #self.offset = offset
 
     # def __str__(self):
     #     return str(self.tag)

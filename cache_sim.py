@@ -18,8 +18,8 @@ class Set(object):
 
 def main():
 	data = []
-	N = 32
-	K = 2
+	N = 64
+	K = 4
 
 	HIT = 0
 	MISS = 0
@@ -95,6 +95,9 @@ def main():
 					cacheItem.index.pop(0)
 					cacheItem.index.append(entry.tag)
 					MISS += 1
+			else: #entry.index != cacheItem.index
+				MISS += 1
+			break
 
 	#Uncomment this portion to use First-In-First-Out Replacement Policy
 	#FIFO
