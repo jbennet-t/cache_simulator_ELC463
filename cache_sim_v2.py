@@ -17,19 +17,19 @@ def set_counter(index_loc, N, cache):
     return(set_cntr)
 
 
-def main():
+def cache_main(trace_file, KN, K, N, method):
     data = []
-    KN = 64
-    K = 4 # number of lines(blocks) per set
-    N = int(KN/K) # number of sets
-    L = 8 # number of bytes per line(block) of cache mem
+    # KN
+    # K # number of lines(blocks) per set
+    # N # number of sets
+    # L = 8 # number of bytes per line(block) of cache mem
 
     HIT = 0
     MISS = 0
 
     #Read memory references from trace file and store every byte as a string of bits in a list
     #Currently using TRACE1.DAT -> change for trace file as neccesary
-    with open("traceFiles/TRACE1.DAT", "rb") as file:
+    with open(trace_file, "rb") as file:
         byte = file.read(1)
         while byte:
             byte = ord(byte)#converting byte to unicode prior to binary convert
@@ -73,11 +73,8 @@ def main():
 
    # print('[%s]' % ', '.join(map(str, cache)))
 
-     #print(cache[0][0])
         
-    empty = 0
-    hit = 0
-    overwrite = 0
+
     #-------------------------------------------------------------
     #LRU
     #-------------------------------------------------------------
@@ -87,75 +84,66 @@ def main():
     for entry in reorderedData:
         for i in range(K):
             if cache[i][0] == entry[index_start:21]: #if the index of the trace data == the index of the cache
+                k = 1
+                hit_flg = 0
+                for k in range(N+1): #1 - N
+                    if (cache[i][k] == entry[0:index_start]):
+                        hit_flg = 1
+
                 if cache[i][set_cntr] == 0: #if the space is empty
                     cache[i][set_cntr] = entry[0:index_start] #fill empty space with tag
                     MISS += 1
                     set_cntr = set_counter(i, N, cache) #increment and check set counter
                     cache[i][N+1] = set_cntr
-                    empty += 1
                     #print(set_cntr)
-                elif cache[i][set_cntr] != 0 and cache[i][set_cntr] == entry[0:index_start]: #if not empty & the same
+                elif cache[i][set_cntr] != 0 and hit_flg == 1: #if not empty & the same
                     HIT += 1
-                    set_cntr = set_counter(i, N, cache) #increment and check set counter
-                    cache[i][N+1] = set_cntr
-                    hit += 1
-                    #print(set_cntr)
-                else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
+                    if method == 0: #if LRU
+                        set_cntr = set_counter(i, N, cache) #increment and check set counter
+                        cache[i][N+1] = set_cntr
+                    #otherwise, don't for FIFO
+                else:
                     cache[i][set_cntr] = entry[0:index_start]
                     MISS += 1
                     set_cntr = set_counter(i, N, cache) #increment and check set counter
                     cache[i][N+1] = set_cntr
-                    overwrite += 1
-            # else: #entry.index != cacheItem.index
-            #     MISS += 1
-            # break
+
+
     #--------------------------------------------------------------
 
-    #-------------------------------------------------------------- 
-#     #FIFO
-#     #--------------------------------------------------------------
-    # set_cntr = 1 #variable for counting spot in set
-    # i = 0
-    # j = 0
-    # for entry in reorderedData:
-    #     for i in range(K):
-    #         if cache[i][0] == entry[index_start:21]: #if the index of the trace data == the index of the cache
-    #             if cache[i][set_cntr] == 0: #if the space is empty
-    #                 cache[i][set_cntr] = entry[0:index_start] #fill empty space with tag
-    #                 MISS += 1
-    #                 set_cntr = set_counter(i, N, cache) #increment and check set counter
-    #                 cache[i][N+1] = set_cntr
-    #                 empty += 1
-    #                 #print(set_cntr)
-    #             elif cache[i][set_cntr] != 0 and cache[i][set_cntr] == entry[0:index_start]: #if not empty & the same
-    #                 HIT += 1
-    #                 # set_cntr = set_counter(i, N, cache) #increment and check set counter
-    #                 # cache[i][N+1] = set_cntr
-    #                 hit += 1
-    #                 #print(set_cntr)
-    #             else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
-    #                 cache[i][set_cntr] = entry[0:index_start]
-    #                 MISS += 1
-    #                 set_cntr = set_counter(i, N, cache) #increment and check set counter
-    #                 cache[i][N+1] = set_cntr
-    #                 overwrite += 1
-    #         # else: #entry.index != cacheItem.index
-    #         #     MISS += 1
-    #         # break
-                    
-    print('[%s]' % ', '.join(map(str, cache)))
-    print("empty:", empty)
-    print("hit:", hit)
-    print("overwrite:", overwrite)
+    #print('[%s]' % ', '.join(map(str, cache)))
 
 
     #Output results
     total = MISS + HIT
-    print("Misses: %d\nHits: %d" % (MISS, HIT))
-    print("Miss Rate: %f \nHit Rate: %f" % ((MISS/(total*10)), (HIT/(total*10))))
-    print("Total Number of References = %d" % (total))
-    # print("Miss rate = %f" % (MISS/600000))
-    # print("Hit rate = %f" % (HIT/600000))
+    MISS_RATE = ((MISS/total)*10)
+    # print("Misses: %d\nHits: %d" % (MISS, HIT))
+    # print("Miss Rate: %f \nHit Rate: %f" % ((MISS/(total*10)), (HIT/(total*10))))
+    # print("Total Number of References = %d" % (total))
+
+    return(MISS,MISS_RATE)
+
+
+
+
+def main():
+    KN_value = [64,256]                                                  # def KN
+    K_value = [2,4,8,16]                                                # def K
+    method = [0,1]                                                         # Type LRU or FIFO
+    filename = ["traceFiles/TRACE1.DAT","traceFiles/TRACE2.DAT"]           # Trace File
+
+    test_num = 1
+    with open('output_cache.txt', 'wt') as out:
+        out.write("Test #\tTrace\tType\tKN\tK\tMisses\tMiss Rate\n")# Save in txt
+
+        for x in range(2):
+            for v in method:
+                for i in KN_value:
+                    for j in K_value:
+                        N_value = int(i/j)
+                        miss_count, miss_rate = cache_main(filename[x], i, j, N_value, v)
+                        out.write("%d\t%d\t%d\t%d\t%d\t%d\t%f\n" % (test_num,x,v,i,j,miss_count,miss_rate))
+                        test_num += 1
 
 
 

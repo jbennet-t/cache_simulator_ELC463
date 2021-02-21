@@ -20,12 +20,21 @@ for a set in setList
       MISS += 1
 
 
+LRU new sudo code
+for a entry in reorderedData
+  
+
+
+
 
 FIFO sudo code
 
-for a set in setList
- for a cacheItem in cacheList
-  if set.index == cacheItem.index
+for a entry in reorderedData
+  for i in range(K)
+    for j in range(N)
+     if cache[i][j] == entry.index
+	if cache[i][j] == 0
+	  cache
 
 
 index = 0001 tag = 101010 Writing in, M
