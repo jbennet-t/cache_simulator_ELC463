@@ -12,7 +12,9 @@ def set_counter(index_loc, N, cache):
         set_cntr = 1 #set to 1 bc location 0 in the list is the "index" val
     else:
         set_cntr += 1
-    cache[index_loc][N+1] = set_cntr #where the set_cntr val is stored
+    #cache[index_loc][N+1] = set_cntr #where the set_cntr val is stored
+
+    return(set_cntr)
 
 
 def main():
@@ -73,89 +75,78 @@ def main():
 
      #print(cache[0][0])
         
-
-    # #-------------------------------------------------------------
-    # #old LRU
-    # #-------------------------------------------------------------
-    # for entry in reorderedData:
-    #     for cacheItem in cache:
-    #         for i in range(N):
-    #             set_cntr = 0 #variable for counting spot in set
-    #             if cacheItem[i][0] == entry[index_start:21]: #if the index of the trace data == the index of the cache
-    #                 if cacheItem[i][set_cntr] == 0: #if the space is empty
-    #                     cacheItem[i][set_cntr] = entry[0:index_start] #fill empty space with tag
-    #                     MISS += 1
-    #                     set_cntr += 1 #increment spot in set since its filled
-    #                     cacheItem[i][N-2] = set_cntr #update set counter
-    #                 elif cacheItem[i][set_cntr] != 0 and cacheItem[i][set_cntr] == entry[0:index_start]: #if not empty & the same
-    #                     HIT += 1
-    #                 else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
-    #                     cacheItem[i][set_cntr] = entry[0:index_start]
-    #                     MISS += 1
-    #                     set_cntr += 1 #increment spot in set since its filled
-    #                     cacheItem[i][N-2] = set_cntr #update set counter
-    #             # else: #entry.index != cacheItem.index
-    #             #     MISS += 1
-    #             # break
-    # #--------------------------------------------------------------
-
     empty = 0
     hit = 0
     overwrite = 0
     #-------------------------------------------------------------
     #new LRU
     #-------------------------------------------------------------
+    # set_cntr = 1 #variable for counting spot in set
+    # i = 0
+    # j = 0
+    # for entry in reorderedData:
+    #     for i in range(K):
+    #         if cache[i][0] == entry[index_start:21]: #if the index of the trace data == the index of the cache
+    #             if cache[i][set_cntr] == 0: #if the space is empty
+    #                 cache[i][set_cntr] = entry[0:index_start] #fill empty space with tag
+    #                 MISS += 1
+    #                 set_cntr = set_counter(i, N, cache) #increment and check set counter
+    #                 cache[i][N+1] = set_cntr
+    #                 empty += 1
+    #                 #print(set_cntr)
+    #             elif cache[i][set_cntr] != 0 and cache[i][set_cntr] == entry[0:index_start]: #if not empty & the same
+    #                 HIT += 1
+    #                 set_cntr = set_counter(i, N, cache) #increment and check set counter
+    #                 cache[i][N+1] = set_cntr
+    #                 hit += 1
+    #                 #print(set_cntr)
+    #             else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
+    #                 cache[i][set_cntr] = entry[0:index_start]
+    #                 MISS += 1
+    #                 set_cntr = set_counter(i, N, cache) #increment and check set counter
+    #                 cache[i][N+1] = set_cntr
+    #                 overwrite += 1
+    #         # else: #entry.index != cacheItem.index
+    #         #     MISS += 1
+    #         # break
+    # #--------------------------------------------------------------
+
+    #-------------------------------------------------------------- 
+#     #FIFO
+#     #--------------------------------------------------------------
     set_cntr = 1 #variable for counting spot in set
     i = 0
+    j = 0
     for entry in reorderedData:
         for i in range(K):
             if cache[i][0] == entry[index_start:21]: #if the index of the trace data == the index of the cache
                 if cache[i][set_cntr] == 0: #if the space is empty
                     cache[i][set_cntr] = entry[0:index_start] #fill empty space with tag
                     MISS += 1
-                    set_counter(i, N, cache) #increment and check set counter
+                    set_cntr = set_counter(i, N, cache) #increment and check set counter
+                    cache[i][N+1] = set_cntr
                     empty += 1
+                    #print(set_cntr)
                 elif cache[i][set_cntr] != 0 and cache[i][set_cntr] == entry[0:index_start]: #if not empty & the same
                     HIT += 1
-                    #set_counter(i, N, cache) #increment and check set counter
+                    # set_cntr = set_counter(i, N, cache) #increment and check set counter
+                    # cache[i][N+1] = set_cntr
                     hit += 1
+                    #print(set_cntr)
                 else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
                     cache[i][set_cntr] = entry[0:index_start]
                     MISS += 1
-                    set_counter(i, N, cache)
+                    set_cntr = set_counter(i, N, cache) #increment and check set counter
+                    cache[i][N+1] = set_cntr
                     overwrite += 1
-
             # else: #entry.index != cacheItem.index
             #     MISS += 1
             # break
-    #--------------------------------------------------------------
-
+                    
     print('[%s]' % ', '.join(map(str, cache)))
     print("empty:", empty)
     print("hit:", hit)
     print("overwrite:", overwrite)
-
-    #-------------------------------------------------------------- 
-#     #FIFO
-#     #--------------------------------------------------------------
-#     # for entry in dataSets:
-#     #     for cacheItem in cache:
-#     #         if entry.index == cacheItem.index:
-#     #             if cacheItem.tag[0] == "":
-#     #                 cacheItem.tag = entry.tag
-#     #                 MISS += 1
-#     #             elif cacheItem.tag[0] != "":
-#     #                 cacheItem.tag.append(entry.tag)
-#     #                 HIT += 1
-#     #             else: # cacheItem.tag[0] != "" and cacheItem.tag != entry.tag:
-#     #                 cacheItem.tag.pop(0)
-#     #                 cacheItem.tag.append(entry.tag)
-#     #                 MISS += 1
-#     #         else: #entry.index != cacheItem.index
-#     #             MISS += 1  
-#     #         break
-                    
-
 
 
     #Output results
